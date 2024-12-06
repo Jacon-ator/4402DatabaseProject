@@ -10,7 +10,6 @@ I spent too much time trying to get docker working properly to just have a docke
 
 Install dependincies and then clone github.
 
--make clean
-then -make clean to run code. If database can't open you may have to change the dbString at the top of main.c
+-make clean then -make run to run code. If database can't open you may have to change the dbString at the top of main.c
 
 Happy grading!
