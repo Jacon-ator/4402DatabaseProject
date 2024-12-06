@@ -150,7 +150,6 @@ void printTable(sqlite3 *db, const char *tableName)
 
     char *errMsg = 0;
 
-    // Execute the SQL query
     int printHeader = 1;
     int rc = sqlite3_exec(db, sql, printCallback, &printHeader, &errMsg);
     if (rc != SQLITE_OK) 
@@ -188,7 +187,6 @@ void printMarket(sqlite3 *db)
 
     char *errMsg = 0;
 
-    // Execute SQL query using the existing printCallback function
     int printHeader = 1;
     int rc = sqlite3_exec(db, sql, printCallback, &printHeader, &errMsg);
     if (rc != SQLITE_OK) 

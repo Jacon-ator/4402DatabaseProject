@@ -12,9 +12,9 @@ void deleteAccount(sqlite3 *db);
 int userCallback(void *data, int argc, char **argv, char **colName) 
 {
     if (data) {
-        int *user_id = (int *)data; // Cast data to an integer pointer
+        int *user_id = (int *)data;
         if (argc > 0 && argv[0]) {
-            *user_id = atoi(argv[0]); // Store the user_id as an integer
+            *user_id = atoi(argv[0]); 
         }
     }
     return 0;
@@ -24,16 +24,14 @@ int checkUniqueness(sqlite3 *db, const char *table, const char *column, const ch
 {
     char sql[256];
     char *errMsg = 0;
-    int exists = 0; // Flag to indicate if the value exists
+    int exists = 0;
 
-    // Construct the SQL query
     snprintf(sql, sizeof(sql),
              "SELECT 1 FROM %s WHERE %s = '%s';",
              table, column, value);
 
-    // Execute the SQL query
     int rc = sqlite3_exec(db, sql, [](void *data, int argc, char **argv, char **colName) -> int {
-        *(int *)data = 1; // Set exists to true if a row is found
+        *(int *)data = 1;
         return 0;
     }, &exists, &errMsg);
 
@@ -41,10 +39,10 @@ int checkUniqueness(sqlite3 *db, const char *table, const char *column, const ch
     {
         fprintf(stderr, "SQL error: %s\n", errMsg);
         sqlite3_free(errMsg);
-        return -1; // Return -1 to indicate an error
+        return -1; 
     }
 
-    return exists; // Return 1 if the value exists, 0 otherwise
+    return exists;
 }
 
 int loginLogic(sqlite3 *db) 
@@ -52,31 +50,27 @@ int loginLogic(sqlite3 *db)
     char username[50], password[50];
     char sql[256];
     char *errMsg = 0;
-    int user_id = -1; // Variable to store the user ID
+    int user_id = -1; 
 
     while (user_id == -1) 
     {
-        // Prompt for username and password
         printf("Enter username: ");
         scanf("%49s", username);
         printf("Enter password: ");
         scanf("%49s", password);
 
-        // Construct SQL query
         snprintf(sql, sizeof(sql),
                  "SELECT user_id FROM user WHERE username = '%s' AND password = '%s';",
                  username, password);
 
-        // Execute query and pass user_id as data
         int rc = sqlite3_exec(db, sql, userCallback, &user_id, &errMsg);
         if (rc != SQLITE_OK) 
         {
             fprintf(stderr, "SQL error: %s\n", errMsg);
             sqlite3_free(errMsg);
-            return -1; // Return -1 on error
+            return -1; 
         }
 
-        // Check if the user was found
         if (user_id != -1) 
         {
             printf("Login successful! Welcome, %s.\n", username);
@@ -87,7 +81,7 @@ int loginLogic(sqlite3 *db)
         }
     }
 
-    return user_id; // Return the user ID to the caller
+    return user_id;
 }
 
 void createAccountLogic(sqlite3 *db) 
@@ -96,7 +90,6 @@ void createAccountLogic(sqlite3 *db)
     char sql[512];
     char *errMsg = 0;
 
-    // Prompt for a unique email
     while (1) 
     {
         printf("Enter your email: ");
@@ -108,11 +101,10 @@ void createAccountLogic(sqlite3 *db)
         } 
         else 
         {
-            break; // Email is unique
+            break;
         }
     }
 
-    // Prompt for a unique username
     while (1) 
     {
         printf("Enter a username: ");
@@ -124,11 +116,10 @@ void createAccountLogic(sqlite3 *db)
         } 
         else 
         {
-            break; // Username is unique
+            break; 
         }
     }
 
-    // Prompt for other user details
     printf("Enter a password: ");
     scanf("%49s", password);
 
@@ -141,7 +132,6 @@ void createAccountLogic(sqlite3 *db)
     printf("Enter your phone number (or type 'NULL' if you don't want to provide one): ");
     scanf("%19s", phone);
 
-    // Insert new user into the database
     snprintf(sql, sizeof(sql),
              "INSERT INTO user (username, password, email, first_name, last_name, phone_num) "
              "VALUES ('%s', '%s', '%s', '%s', '%s', %s);",
@@ -156,21 +146,18 @@ void createAccountLogic(sqlite3 *db)
         return;
     }
 
-    // Capture the new user's ID
     user_id = (int)sqlite3_last_insert_rowid(db);
     printf("Account successfully created! Please Log In. \n");
 
-    // Add a blank quest log for the new user
     blankQuestLog(db);
 
-    // Redirect to login logic
     loginLogic(db);
 }
 
 
 void blankQuestLog(sqlite3 *db)
 {
-    int amountOfQuest = 4; // Change based on amount of quest in game
+    int amountOfQuest = 4; 
     for (int i = 1; i <= amountOfQuest; i++)
     {
         char sql[512];
@@ -205,7 +192,6 @@ void deleteAccount(sqlite3 *db)
         char sql[512];
         char *errMsg = 0;
 
-        // Start transaction
         int rc = sqlite3_exec(db, "BEGIN TRANSACTION;", 0, 0, &errMsg);
         if (rc != SQLITE_OK)
         {
@@ -214,40 +200,36 @@ void deleteAccount(sqlite3 *db)
             return;
         }
 
-        // Delete from quest_log
         snprintf(sql, sizeof(sql), "DELETE FROM quest_log WHERE user_id = %d;", user_id);
         rc = sqlite3_exec(db, sql, 0, 0, &errMsg);
         if (rc != SQLITE_OK)
         {
             fprintf(stderr, "SQL error: %s\n", errMsg);
             sqlite3_free(errMsg);
-            sqlite3_exec(db, "ROLLBACK;", 0, 0, 0); // Rollback transaction on failure
+            sqlite3_exec(db, "ROLLBACK;", 0, 0, 0); 
             return;
         }
 
-        // Delete from char_list
         snprintf(sql, sizeof(sql), "DELETE FROM char_list WHERE user_id = %d;", user_id);
         rc = sqlite3_exec(db, sql, 0, 0, &errMsg);
         if (rc != SQLITE_OK)
         {
             fprintf(stderr, "SQL error: %s\n", errMsg);
             sqlite3_free(errMsg);
-            sqlite3_exec(db, "ROLLBACK;", 0, 0, 0); // Rollback transaction on failure
+            sqlite3_exec(db, "ROLLBACK;", 0, 0, 0); 
             return;
         }
 
-        // Delete from user table
         snprintf(sql, sizeof(sql), "DELETE FROM user WHERE user_id = %d;", user_id);
         rc = sqlite3_exec(db, sql, 0, 0, &errMsg);
         if (rc != SQLITE_OK)
         {
             fprintf(stderr, "SQL error: %s\n", errMsg);
             sqlite3_free(errMsg);
-            sqlite3_exec(db, "ROLLBACK;", 0, 0, 0); // Rollback transaction on failure
+            sqlite3_exec(db, "ROLLBACK;", 0, 0, 0);
             return;
         }
 
-        // Commit transaction
         rc = sqlite3_exec(db, "COMMIT;", 0, 0, &errMsg);
         if (rc != SQLITE_OK)
         {

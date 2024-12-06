@@ -120,7 +120,6 @@ void printInventoryTable(sqlite3 *db)
 
     char *errMsg = 0;
 
-    // Execute SQL query using the existing printCallback function
     int printHeader = 1;
     int rc = sqlite3_exec(db, sql, printCallback, &printHeader, &errMsg);
     if (rc != SQLITE_OK) 
