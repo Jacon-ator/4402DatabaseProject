@@ -13,9 +13,8 @@ int user_id = -1;
 int main() 
 {
     sqlite3 *db;
-    const char *dbFile = "/workspaces/Code/database/4402Project.db";
 
-    if (openDB(&db, dbFile)) 
+    if (openDB(&db, dbString)) 
     {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         return 1;
