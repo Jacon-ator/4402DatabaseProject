@@ -1,6 +1,6 @@
 # 4402 Project Documentation:
 
-## Pre Req:
+### Pre Req:
 
 - SQLite3
 - GCC/Clang
@@ -8,5 +8,7 @@
 
 Install dependincies and then clone github.
 
--make clean then -make run to run code. If database can't open you may have to change the dbString at the top of main.c
+`-make clean` then `-make run` to run code.
+
+Test Queries can be found in the design document along with a guide to the interface options.
 
