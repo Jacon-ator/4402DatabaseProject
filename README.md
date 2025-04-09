@@ -1,14 +1,36 @@
-# 4402 Project Documentation:
+# CSC 4402 Database Systems Project
 
-### Pre Req:
+## Project Overview
 
-- SQLite3
-- GCC/Clang
-- Make
+This project was developed for **CSC 4402: Database Systems**. The objective was to choose a fictional or real-world enterprise, design a corresponding database, and implement a simple **Command Line Interface (CLI)** to interact with it.
 
-Install dependincies and then clone github.
+Key deliverables included:
+- A full database schema
+- An Entity-Relationship (ER) diagram
+- SQL queries for interaction
+- A CLI application written in C
 
-`-make clean` then `-make run` to run code.
+More details, including the ER diagram and sample queries, are available in the [Design Document](./4402%20Design%20Document.pdf).
 
-Test Queries can be found in the design document along with a guide to the interface options.
+---
 
+## Requirements
+
+To run this project, you’ll need:
+
+- **SQLite3**
+- **GCC** or **Clang**
+- **Make**
+
+
+---
+
+## Getting Started
+
+1. **Clone the Repository:**
+2. **Run Make Commands**
+   ```bash
+   cd code
+   make clean
+   make 
+   make run
